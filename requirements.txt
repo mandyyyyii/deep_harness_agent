@@ -1,0 +1,5 @@
+harbor>=0.1.44
+litellm>=1.60,<1.83
+tenacity>=8.0
+tiktoken>=0.7
+openai>=1.0
