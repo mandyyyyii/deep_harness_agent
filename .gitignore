@@ -6,11 +6,11 @@ dist/
 build/
 *.egg
 
-# Environments
-.env
-.venv
-env/
-venv/
+# # Environments
+# .env
+# .venv
+# env/
+# venv/
 
 # Harbor jobs and results (large, per-run)
 results/
