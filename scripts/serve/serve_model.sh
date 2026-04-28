@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 # Launch SGLang server for a given model.
+#
 # Usage: bash serve_model.sh <model_path_or_hf_id> <port> [tp_size]
 #
 # Examples:
@@ -14,15 +15,41 @@ TP="${3:-1}"
 
 # Derive a short served-model-name from the model path
 MODEL_NAME=$(basename "$MODEL" | sed 's|/|_|g')
-
 HOST_IP=$(hostname -I | awk '{print $1}')
 
+# Model-specific flags
+EXTRA_ARGS=()
+
+case "$MODEL" in
+  *Qwen3.5*|*qwen3.5*|*Qwen3-*)
+    # Qwen 3.x family: enable reasoning parser + tool call parser
+    EXTRA_ARGS+=(
+      --context-length 262144
+      --reasoning-parser qwen3
+      --tool-call-parser qwen3_coder
+    )
+    ;;
+  *GLM*|*glm*)
+    # GLM family: standard tool calling, shorter context
+    EXTRA_ARGS+=(
+      --context-length 131072
+    )
+    ;;
+  *)
+    # Default: conservative context length
+    EXTRA_ARGS+=(
+      --context-length 131072
+    )
+    ;;
+esac
+
 echo "Starting SGLang server:"
-echo "  Model: $MODEL"
-echo "  Port:  $PORT"
-echo "  TP:    $TP"
-echo "  Name:  $MODEL_NAME"
-echo "  URL:   http://$HOST_IP:$PORT/v1"
+echo "  Model:   $MODEL"
+echo "  Name:    $MODEL_NAME"
+echo "  Port:    $PORT"
+echo "  TP:      $TP"
+echo "  URL:     http://$HOST_IP:$PORT/v1"
+echo "  Extra:   ${EXTRA_ARGS[*]}"
 echo ""
 
 exec python -m sglang.launch_server \
@@ -32,5 +59,4 @@ exec python -m sglang.launch_server \
   --port "$PORT" \
   --tp-size "$TP" \
   --mem-fraction-static 0.9 \
-  --context-length 131072 \
-  --tool-call-parser qwen3_coder
+  "${EXTRA_ARGS[@]}"
