@@ -10,7 +10,7 @@ Usage (with terminus-2 adapter):
       --agent-import-path dhav6_agent:DHAv6Agent \\
       -m openai/glm-4.7-flash -d terminal-bench@2.0 \\
       -o results/dhav6_iter01 -n 1 -l 89 \\
-      --ak api_base=http://${SGLANG_HOST}:${SGLANG_PORT}/v1 --ak temperature=0.5
+      --ak api_base=http://131.179.168.120:8054/v1 --ak temperature=0.5
 """
 
 import json
@@ -38,6 +38,7 @@ class DHAv6Agent(Terminus2):
         self._validator_api_base = kwargs.pop("validator_api_base", None)
         self._curator_budget = int(kwargs.pop("curator.budget", 50000))
         self._curator_reserved_turns = int(kwargs.pop("curator.reserved_turns", 15))
+        self._curator_model = kwargs.pop("curator.model", None)
 
         self._validator_duplicate_window = int(kwargs.pop("validator.rules.duplicate_window", 5))
         self._validator_l2_enabled = parse_bool(
@@ -49,7 +50,7 @@ class DHAv6Agent(Terminus2):
             kwargs.pop("validator.task_understanding.max_tokens", 4096)
         )
 
-        self._harness_api_base = kwargs.get("api_base", "http://${SGLANG_HOST}:${SGLANG_PORT}/v1")
+        self._harness_api_base = kwargs.get("api_base", "http://131.179.168.120:8054/v1")
         self._harness_model = kwargs.get("model_name", "openai/glm-4.7-flash")
 
         super().__init__(*args, **kwargs)
@@ -124,7 +125,7 @@ class DHAv6Agent(Terminus2):
             token_tracker=self._token_tracker,
             enable_curator=self._enable_curator,
             curator_api_base=curator_api,
-            curator_model=self._harness_model,
+            curator_model=self._curator_model or self._harness_model,
             curator_budget=self._curator_budget,
             curator_reserved_turns=self._curator_reserved_turns,
             enable_validator=self._enable_validator,

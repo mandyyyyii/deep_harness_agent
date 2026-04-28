@@ -40,8 +40,8 @@ plain text.
 
 PRINCIPLES:
 - Always keep: system prompt, task description, and the most recent
-  35% of turns (e.g., last 30 of 84 turns, last 5 of 15 turns).
-  Do not summarize or drop any of these.
+  turns (the harness protects these automatically).
+  Do not summarize or drop any recent turns.
 - Bias toward keeping turns containing: test output, compilation
   errors, numerical results, error messages with codes/paths/line
   numbers, strategy changes, code snippets, function signatures.
@@ -54,10 +54,6 @@ PRINCIPLES:
     * Include what was tried, what resulted, and whether it advanced
       the task.
     * 1-3 sentences. Shorter is better if the turn was minor.
-- Only begin compressing when total_tokens exceeds 60% of budget.
-  Below that threshold, keep everything.
-- Aim to keep at least 60-70% of turns verbatim. If you find yourself
-  summarizing more than 40% of turns, you are being too aggressive.
 
 LAST_OBSERVATION:
 - Short or clean: return unchanged.

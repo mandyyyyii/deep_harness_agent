@@ -9,7 +9,7 @@ Usage:
       --agent-import-path dhav6_miniswe_agent:DHAv6MiniSweAgent \\
       -m openai/qwen3.5-35b-a3b -d swe-bench \\
       -o results/dhav6_swe_01 -n 1 \\
-      --ak api_base=http://${SGLANG_HOST}:${SGLANG_PORT}/v1
+      --ak api_base=http://131.179.168.120:8054/v1
 """
 
 import json
@@ -75,7 +75,7 @@ class DHAv6MiniSweAgent(BaseAgent):
             kwargs.pop("validator.task_understanding.max_tokens", 4096)
         )
 
-        self._harness_api_base = kwargs.pop("api_base", "http://${SGLANG_HOST}:${SGLANG_PORT}/v1")
+        self._harness_api_base = kwargs.pop("api_base", "http://131.179.168.120:8054/v1")
         self._harness_model = kwargs.get("model_name", "openai/qwen3.5-35b-a3b")
         self._max_episodes = int(kwargs.pop("max_episodes", 300))
         self._temperature = float(kwargs.pop("temperature", 0.6))

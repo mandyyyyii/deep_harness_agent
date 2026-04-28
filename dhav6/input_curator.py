@@ -218,8 +218,12 @@ async def curate_input(
     if not raw_turns:
         return last_observation
 
-    # Passthrough: skip LLM when all turns fit in the keep window
-    if len(raw_turns) <= reserved_turns:
+    # Count actual (non-rejected) turns for the passthrough decision
+    actual_turns = [rt for rt in raw_turns if not rt.metadata.get("rejected", False)]
+    n_actual = len(actual_turns)
+
+    # Passthrough: skip LLM when actual (non-rejected) turns fit in the keep window
+    if n_actual <= reserved_turns:
         chat._messages = _rebuild_chat_messages(
             first_user_message, raw_turns,
             summarize_map={}, drop_set=set(),
@@ -227,7 +231,7 @@ async def curate_input(
         chat.reset_response_chain()
         token_tracker.n_curator_pass += len(raw_turns)
         logger.debug(
-            f"[curator] turn {turn_number}: passthrough ({len(raw_turns)} turns <= {reserved_turns} reserved)"
+            f"[curator] turn {turn_number}: passthrough ({n_actual} actual turns <= {reserved_turns} reserved, {len(raw_turns)} total incl rejected)"
         )
         return last_observation
 
