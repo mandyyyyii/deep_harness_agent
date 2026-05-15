@@ -1,0 +1,4 @@
+[submodule "baselines/metaharness"]
+	path = baselines/metaharness
+	url = https://github.com/SuperagenticAI/metaharness.git
+	branch = main
